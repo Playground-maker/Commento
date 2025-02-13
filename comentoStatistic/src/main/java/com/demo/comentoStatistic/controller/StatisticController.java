@@ -20,7 +20,7 @@ public class StatisticController {
         return ResponseEntity.ok(statisticService.getYearLogins(year));
     }
 
-    @RequestMapping(value = "/api/v1/logins/{year}/{month}", produces = "applications/json")
+    @RequestMapping(value = "/api/v1/logins/{year}/{month}", produces = "application/json")
     @ResponseBody
     public Object getYearMonthLoginCount(@PathVariable("year") String year, @PathVariable("month") String month) {
         return ResponseEntity.ok(statisticService.getYearMonthLogins(year, month));
