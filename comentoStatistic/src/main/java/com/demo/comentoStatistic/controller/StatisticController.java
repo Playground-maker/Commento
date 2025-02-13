@@ -14,13 +14,13 @@ public class StatisticController {
     @Autowired
     StatisticService statisticService;
 
-    @RequestMapping(value = "api/v1/logins/{year}", produces = "application/json")
+    @RequestMapping(value = "/api/v1/logins/{year}", produces = "application/json")
     @ResponseBody
     public ResponseEntity<YearCountDto> getYearLoginCount(@PathVariable("year") String year) {
         return ResponseEntity.ok(statisticService.getYearLogins(year));
     }
 
-    @RequestMapping(value = "api/v1/logins/{year}/{month}", produces = "applications/json")
+    @RequestMapping(value = "/api/v1/logins/{year}/{month}", produces = "applications/json")
     @ResponseBody
     public Object getYearMonthLoginCount(@PathVariable("year") String year, @PathVariable("month") String month) {
         return ResponseEntity.ok(statisticService.getYearMonthLogins(year, month));
