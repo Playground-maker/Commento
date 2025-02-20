@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.demo.comentoStatistic.mapper.LoginMapper">
+
+    <!-- 1. 월별 접속자 수 조회 -->
+    <select id="getMonthlyLoginCount" parameterType="string" resultType="map">
+        SELECT SUBSTRING(Create_date, 1, 6) AS month,
+               COUNT(DISTINCT User_id) AS unique_users
+        FROM statistic.request_info
+        WHERE Create_date LIKE #{year} || '%'
+        GROUP BY month
+        ORDER BY month
+    </select>
+
+    <!-- 2. 일자별 접속자 수 조회 -->
+    <select id="getDailyLoginCount" parameterType="map" resultType="map">
+        SELECT SUBSTRING(Create_date, 1, 8) AS date,
+               COUNT(DISTINCT User_id) AS unique_users
+        FROM statistic.request_info
+        WHERE Create_date LIKE #{year} || #{month} || '%'
+        GROUP BY date
+        ORDER BY date
+    </select>
+
+    <!-- 3. 평균 하루 로그인 수 조회 -->
+    <select id="getAverageDailyLoginCount" parameterType="string" resultType="double">
+        SELECT AVG(daily_logins) AS avg_daily_logins
+        FROM (
+                 SELECT SUBSTRING(Create_date, 1, 8) AS date,
+                   COUNT(DISTINCT User_id) AS daily_logins
+                 FROM statistic.request_info
+                 WHERE Create_date LIKE #{year} || '%'
+                 GROUP BY date
+             ) AS daily_counts
+    </select>
+
+    <!-- 4. 모든 로그인 날짜 조회 (휴일 제외용) -->
+    <select id="findAllLoginDates" parameterType="string" resultType="java.time.LocalDate">
+        SELECT DISTINCT SUBSTRING(Create_date, 1, 8) AS login_date
+        FROM statistic.request_info
+        WHERE Create_date LIKE #{year} || '%'
+    </select>
+
+    <!-- 5. 부서별 월별 로그인 수 조회 -->
+    <select id="getDepartmentMonthlyLoginCount" parameterType="map" resultType="map">
+        SELECT u.Hr_organ AS department,
+               SUBSTRING(r.Create_date, 1, 6) AS month,
+               COUNT(DISTINCT r.User_id) AS unique_users
+        FROM statistic.request_info AS r
+            JOIN statistic.user AS u ON r.User_id = u.User_id
+        WHERE r.Create_date LIKE #{year} || #{month} || '%'
+        GROUP BY department, month
+        ORDER BY department, month
+    </select>
+
+</mapper>
